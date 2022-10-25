@@ -1,3 +1,3 @@
-# Addon Name
+# UnitFramesImproved
 
-This is the repository for <Addon Name>. Modified for Ascension.gg. 
+This is the repository for UnitFramesImproved. Modified for Ascension.gg. 
