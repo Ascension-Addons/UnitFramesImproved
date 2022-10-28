@@ -56,10 +56,8 @@ function EnableUnitFramesImproved()
 	hooksecurefunc("TextStatusBar_UpdateTextString", UnitFramesImproved_TextStatusBar_UpdateTextString);
 	
 	-- Hook PlayerFrame functions
-	hooksecurefunc("PlayerFrame_SequenceFinished", UnitFramesImproved_PlayerFrame_SequenceFinished);
 	hooksecurefunc("PlayerFrame_ToPlayerArt", UnitFramesImproved_PlayerFrame_ToPlayerArt);
 	hooksecurefunc("PlayerFrame_ToVehicleArt", UnitFramesImproved_PlayerFrame_ToVehicleArt);
-	hooksecurefunc("PlayerFrame_ResetPosition", UnitFramesImproved_PlayerFrame_ResetPosition);
 	PlayerFrame:SetScript("OnMouseDown", UnitFramesImproved_PlayerFrame_OnMouseDown);
 	PlayerFrame:SetScript("OnMouseUp", UnitFramesImproved_PlayerFrame_OnMouseUp);
 	
@@ -85,10 +83,6 @@ function EnableUnitFramesImproved()
 	-- Setup relative layout for targetframe compared to PlayerFrame
 	TargetFrame:SetPoint("TOPLEFT", PlayerFrame, "TOPRIGHT", 36, 0);
 	
-	-- Call reset for the player frame, just in case our hook wasn't set up before it was called
-	-- This will call our hooked code of course
-	PlayerFrame_ResetPosition(PlayerFrame);
-	
 	-- Set up some stylings
 	UnitFramesImproved_Style_PlayerFrame();
 	
@@ -103,6 +97,13 @@ function UnitFramesImproved_Style_PlayerFrame()
 	PlayerFrameTexture:SetTexture("Interface\\Addons\\UnitFramesImproved\\Textures\\UI-TargetingFrame");
 	PlayerStatusTexture:SetTexture("Interface\\Addons\\UnitFramesImproved\\Textures\\UI-Player-Status");
 	PlayerFrameHealthBar:SetStatusBarColor(UnitColor("player"));
+	PlayerFrameManaBar:SetPoint("TOPLEFT", 106, -52)
+	PlayerFrameManaBarText:SetPoint("CENTER", 42, -8)
+	PlayerFrameEnergyBar:Hide()
+	PlayerFrameEnergyBarText:Hide()
+	PlayerFrameRageBar:Hide()
+	PlayerFrameRageBarText:Hide()
+	UnitFramePortrait_Update(PlayerFrame)
 end
 
 function UnitFramesImproved_SetFrameScale(scale)
@@ -255,22 +256,6 @@ function UnitFramesImproved_TextStatusBar_UpdateTextString(textStatusBar)
 	end
 end
 
-function UnitFramesImproved_PlayerFrame_ResetPosition(self)
-	if (characterSettings["PlayerFrameMoved"] == true) then
-		self:ClearAllPoints();
-		
-		anchor = characterSettings["PlayerFrameAnchor"];
-		xOffset = characterSettings["PlayerFrameX"];
-		yOffset = characterSettings["PlayerFrameY"];
-		
-		self:SetPoint(anchor, xOffset, yOffset);
-	end
-end
-
-function UnitFramesImproved_PlayerFrame_SequenceFinished(self)
-	PlayerFrame_ResetPosition(PlayerFrame);
-end
-
 function UnitFramesImproved_PlayerFrame_ToPlayerArt(self)
 	UnitFramesImproved_Style_PlayerFrame();
 end
@@ -287,7 +272,12 @@ function UnitFramesImproved_TargetFrame_Update(self)
 	self.healthbar.lockColor = true
 	self.healthbar:SetWidth(119);
 	self.healthbar:SetHeight(29);
-	self.healthbar:SetPoint("TOPLEFT",7,-22);
+	self.healthbar:SetPoint("TOPRIGHT",-109, -22);
+	self.manabar:SetPoint("TOPRIGHT",-109, -52)
+	self.energybar:Hide()
+	self.ragebar:Hide()
+	self.ragebar.TextString:Hide()
+	self.energybar.TextString:Hide()
 	_G[thisName.."TextureFrameHealthBarText"]:SetPoint("CENTER",-50,6);
 	self.deadText:SetPoint("CENTER",-50,6);
 	self.nameBackground:Hide();
@@ -300,6 +290,7 @@ function UnitFramesImproved_TargetFrame_Update(self)
 		-- Standard by class etc if not
 		self.healthbar:SetStatusBarColor(UnitColor(self.healthbar.unit));
 	end
+	UnitFramePortrait_Update(self)
 end
 
 function UnitFramesImproved_TargetFrame_CheckClassification(self, forceNormalTexture)
