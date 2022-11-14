@@ -98,7 +98,7 @@ function UnitFramesImproved_Style_PlayerFrame()
 	PlayerStatusTexture:SetTexture("Interface\\Addons\\UnitFramesImproved\\Textures\\UI-Player-Status");
 	PlayerFrameHealthBar:SetStatusBarColor(UnitColor("player"));
 	PlayerFrameManaBar:SetPoint("TOPLEFT", 106, -52)
-	PlayerFrameManaBarText:SetPoint("CENTER", 42, -8)
+	PlayerFrameManaBarText:SetPoint("CENTER", 50, -8)
 	PlayerFrameEnergyBar:Hide()
 	PlayerFrameEnergyBarText:Hide()
 	PlayerFrameRageBar:Hide()
@@ -274,10 +274,6 @@ function UnitFramesImproved_TargetFrame_Update(self)
 	self.healthbar:SetHeight(29);
 	self.healthbar:SetPoint("TOPRIGHT",-109, -22);
 	self.manabar:SetPoint("TOPRIGHT",-109, -52)
-	self.energybar:Hide()
-	self.ragebar:Hide()
-	self.ragebar.TextString:Hide()
-	self.energybar.TextString:Hide()
 	_G[thisName.."TextureFrameHealthBarText"]:SetPoint("CENTER",-50,6);
 	self.deadText:SetPoint("CENTER",-50,6);
 	self.nameBackground:Hide();
@@ -369,7 +365,7 @@ function UnitColor(unit)
 		--Try to color it by class.
 		local localizedClass, englishClass = UnitClass(unit);
 		local classColor = RAID_CLASS_COLORS[englishClass];
-		if ( classColor ) then
+		if ( classColor and UnitIsUnit("player", unit) ) then
 			r, g, b = classColor.r, classColor.g, classColor.b;
 		else
 			if ( UnitIsFriend("player", unit) ) then
